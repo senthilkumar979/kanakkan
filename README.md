@@ -18,6 +18,7 @@ A modern, full-stack personal finance management application built with Next.js,
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js 14** (App Router)
 - **React 18** with TypeScript
 - **Tailwind CSS** for styling
@@ -25,12 +26,14 @@ A modern, full-stack personal finance management application built with Next.js,
 - **React Hook Form** with Zod validation
 
 ### Backend
+
 - **Next.js API Routes** (Server Actions)
 - **MongoDB** with Mongoose
 - **JWT** for authentication
 - **Resend** for email delivery
 
 ### Development
+
 - **TypeScript** (Strict mode)
 - **ESLint** + **Prettier**
 - **Zod** for schema validation
@@ -127,8 +130,6 @@ Edit `.env.local` with your configuration:
 ```env
 # Database
 DATABASE_URL=mongodb://localhost:27017/kanakkan
-# or
-DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/kanakkan
 
 # JWT Secrets (generate strong random strings)
 JWT_SECRET=your-super-secret-jwt-key-min-32-chars
@@ -160,46 +161,52 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check code formatting |
-| `npm run seed` | Seed database with sample data |
+| Command                | Description                    |
+| ---------------------- | ------------------------------ |
+| `npm run dev`          | Start development server       |
+| `npm run build`        | Build for production           |
+| `npm run start`        | Start production server        |
+| `npm run lint`         | Run ESLint                     |
+| `npm run format`       | Format code with Prettier      |
+| `npm run format:check` | Check code formatting          |
+| `npm run seed`         | Seed database with sample data |
 
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
 - `POST /api/auth/refresh` - Refresh access token
 - `POST /api/auth/logout` - Logout user
 
 ### Transactions
+
 - `GET /api/expenses` - Get expenses
 - `POST /api/expenses` - Create expense
 - `GET /api/incomes` - Get incomes
 - `POST /api/incomes` - Create income
 
 ### Categories
+
 - `GET /api/categories` - Get categories
 - `POST /api/categories` - Create category
 - `GET /api/subcategories` - Get subcategories
 - `POST /api/subcategories` - Create subcategory
 
 ### Dashboard
+
 - `GET /api/dashboard/metrics` - Get all dashboard metrics
 - `GET /api/dashboard/total-spend` - Get total spend
 - `GET /api/dashboard/category-breakdown` - Get category breakdown
 - `GET /api/dashboard/income-vs-expense` - Get income vs expense
 
 ### Email
+
 - `POST /api/email/monthly-summary` - Send monthly summary email
 
 ### Cron Jobs
+
 - `GET /api/cron/daily-reminder` - Send daily reminder emails to all users (runs automatically at 9PM CET via Vercel Cron)
 
 ## Configuration
@@ -253,12 +260,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Screenshots
 
 ### Dashboard
+
 ![Dashboard](docs/screenshots/dashboard.png)
 
 ### Transaction Form
+
 ![Transaction Form](docs/screenshots/transaction-form.png)
 
 ### Analytics
+
 ![Analytics](docs/screenshots/analytics.png)
 
 ## Acknowledgments
