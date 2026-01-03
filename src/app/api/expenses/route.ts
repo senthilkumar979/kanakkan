@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     return createExpenseController(validationResult.data);
-  } catch (error) {
+  } catch {
     return Response.json(
       {
         success: false,

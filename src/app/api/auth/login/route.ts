@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     return loginController(validationResult.data);
-  } catch (error) {
+  } catch {
     return Response.json(
       {
         success: false,

@@ -1,4 +1,4 @@
-import connectDB from './db';
+// connectDB is not directly imported - connection is established in db.ts before this is called
 import { Category, SubCategory } from '@/modules/category/category.model';
 import { MoneyMode, PaymentType } from '@/modules/payment/payment.model';
 
@@ -85,7 +85,8 @@ async function initializeDefaults(): Promise<void> {
     // Check and initialize Categories
     const categoryCount = await Category.countDocuments({ deletedAt: null });
     if (categoryCount === 0) {
-      const categories = await Category.insertMany(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const categories = await (Category as any).insertMany(
         DEFAULT_CATEGORIES.map((cat) => ({
           ...cat,
           userId: SYSTEM_USER_ID,
@@ -95,7 +96,8 @@ async function initializeDefaults(): Promise<void> {
 
       // Create subcategories after categories are created
       const categoryMap = new Map<string, string>();
-      categories.forEach((cat) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      categories.forEach((cat: any) => {
         categoryMap.set(cat.name, cat._id.toString());
       });
 
@@ -111,14 +113,16 @@ async function initializeDefaults(): Promise<void> {
         };
       });
 
-      await SubCategory.insertMany(subCategoriesToCreate);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (SubCategory as any).insertMany(subCategoriesToCreate);
       console.log(`✅ Initialized ${subCategoriesToCreate.length} default subcategories`);
     }
 
     // Check and initialize Money Modes
     const moneyModeCount = await MoneyMode.countDocuments({ deletedAt: null });
     if (moneyModeCount === 0) {
-      await MoneyMode.insertMany(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (MoneyMode as any).insertMany(
         DEFAULT_MONEY_MODES.map((name) => ({
           name,
           userId: SYSTEM_USER_ID,
@@ -130,7 +134,8 @@ async function initializeDefaults(): Promise<void> {
     // Check and initialize Payment Types
     const paymentTypeCount = await PaymentType.countDocuments({ deletedAt: null });
     if (paymentTypeCount === 0) {
-      await PaymentType.insertMany(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (PaymentType as any).insertMany(
         DEFAULT_PAYMENT_TYPES.map((name) => ({
           name,
           userId: SYSTEM_USER_ID,

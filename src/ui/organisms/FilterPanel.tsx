@@ -78,8 +78,10 @@ export function FilterPanel({
     const start = new Date();
     start.setDate(start.getDate() - days);
 
-    setStartDate(start.toISOString().split('T')[0]);
-    setEndDate(end.toISOString().split('T')[0]);
+    const startDateStr = start.toISOString().split('T')[0];
+    const endDateStr = end.toISOString().split('T')[0];
+    if (startDateStr) setStartDate(startDateStr);
+    if (endDateStr) setEndDate(endDateStr);
 
     onFiltersChange({
       startDate: start,

@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     // Get user to include name in email if available
-    const user = await User.findOne({ email: validationResult.data.email });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const user = await (User as any).findOne({ email: validationResult.data.email });
 
     try {
       const { token } = await requestPasswordReset(validationResult.data.email);

@@ -1,8 +1,4 @@
-import type {
-  CategoryBreakdown,
-  MoneyModeUsage,
-  CardSpend,
-} from '@/modules/dashboard/dashboard.types';
+// Types removed - not currently used in this file
 
 interface ApiResponse<T> {
   success: boolean;

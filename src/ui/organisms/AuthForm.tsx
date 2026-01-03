@@ -43,7 +43,7 @@ export function AuthForm({
   const handleFormSubmit = async (data: RegisterInput | LoginInput) => {
     try {
       await onSubmit(data);
-    } catch (error) {
+    } catch {
       // Error is handled by parent component
     }
   };

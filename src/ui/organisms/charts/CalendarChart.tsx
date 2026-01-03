@@ -24,7 +24,7 @@ export function CalendarChart({
   year = new Date().getFullYear(),
 }: CalendarChartProps) {
   const calendarData = useMemo(() => {
-    const dataMap = new Map(data.map((point) => [point.date, point.value]));
+    const dataMap = new Map<string, number>(data.map((point) => [point.date, point.value]));
 
     const daysInYear = [];
     const startDate = new Date(year, 0, 1);
@@ -36,9 +36,10 @@ export function CalendarChart({
       date.setDate(date.getDate() + 1)
     ) {
       const dateStr = date.toISOString().split('T')[0];
+      if (!dateStr) continue;
       daysInYear.push({
         date: dateStr,
-        value: dataMap.get(dateStr) || 0,
+        value: dataMap.get(dateStr) ?? 0,
         day: date.getDay(),
         week: getWeekNumber(date),
         month: date.getMonth(),
@@ -73,7 +74,8 @@ export function CalendarChart({
     'Dec',
   ];
 
-  const weeks = Array.from(new Set(calendarData.map((d) => d.week))).sort();
+  // Weeks are calculated but not currently used in the UI
+  // const weeks = Array.from(new Set(calendarData.map((d) => d.week))).sort();
 
   if (calendarData.length === 0) {
     return (
@@ -113,7 +115,7 @@ export function CalendarChart({
               {day}
             </div>
           ))}
-          {calendarData.map((day, index) => {
+          {calendarData.map((day) => {
             const color = getColorForValue(day.value);
             return (
               <div

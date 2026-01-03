@@ -19,7 +19,8 @@ async function validateExpenseReferences(
   await connectDB();
 
   if (input.categoryId) {
-    const category = await Category.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const category = await (Category as any).findOne({
       _id: input.categoryId,
       $or: [{ userId }, { userId: 'SYSTEM' }],
       deletedAt: null,
@@ -32,7 +33,8 @@ async function validateExpenseReferences(
   }
 
   if (input.subCategoryId) {
-    const subCategory = await SubCategory.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subCategory = await (SubCategory as any).findOne({
       _id: input.subCategoryId,
       $or: [{ userId }, { userId: 'SYSTEM' }],
       deletedAt: null,
@@ -48,7 +50,8 @@ async function validateExpenseReferences(
   }
 
   if (input.moneyModeId) {
-    const moneyMode = await MoneyMode.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const moneyMode = await (MoneyMode as any).findOne({
       _id: input.moneyModeId,
       $or: [{ userId }, { userId: 'SYSTEM' }],
       deletedAt: null,
@@ -60,7 +63,8 @@ async function validateExpenseReferences(
   }
 
   if (input.paymentTypeId) {
-    const paymentType = await PaymentType.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const paymentType = await (PaymentType as any).findOne({
       _id: input.paymentTypeId,
       $or: [{ userId }, { userId: 'SYSTEM' }],
       deletedAt: null,
@@ -72,7 +76,8 @@ async function validateExpenseReferences(
   }
 
   if (input.cardId) {
-    const card = await Card.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const card = await (Card as any).findOne({
       _id: input.cardId,
       userId,
       deletedAt: null,
@@ -84,7 +89,8 @@ async function validateExpenseReferences(
   }
 
   if (input.accountId) {
-    const account = await BankAccount.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const account = await (BankAccount as any).findOne({
       _id: input.accountId,
       userId,
       deletedAt: null,
@@ -104,7 +110,8 @@ export async function createExpense(
 
   await validateExpenseReferences(input, userId);
 
-  const expense = await Expense.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const expense = await (Expense as any).create({
     amount: input.amount,
     categoryId: input.categoryId,
     subCategoryId: input.subCategoryId,
@@ -169,9 +176,11 @@ export async function getExpenses(
     }
   }
 
-  const expenses = await Expense.find(query).sort({ date: -1, createdAt: -1 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const expenses = await (Expense as any).find(query).sort({ date: -1, createdAt: -1 });
 
-  return expenses.map((expense) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return expenses.map((expense: any) => ({
     id: expense._id.toString(),
     amount: expense.amount,
     categoryId: expense.categoryId,
@@ -195,7 +204,8 @@ export async function getExpenseById(
 ): Promise<ExpenseType | null> {
   await connectDB();
 
-  const expense = await Expense.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const expense = await (Expense as any).findOne({
     _id: expenseId,
     userId,
     deletedAt: null,
@@ -230,7 +240,8 @@ export async function updateExpense(
 ): Promise<ExpenseType> {
   await connectDB();
 
-  const expense = await Expense.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const expense = await (Expense as any).findOne({
     _id: expenseId,
     userId,
     deletedAt: null,
@@ -304,7 +315,8 @@ export async function deleteExpense(
 ): Promise<void> {
   await connectDB();
 
-  const expense = await Expense.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const expense = await (Expense as any).findOne({
     _id: expenseId,
     userId,
     deletedAt: null,

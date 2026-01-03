@@ -10,7 +10,7 @@ interface AuthState {
   isLoading: boolean;
 }
 
-let authStateListeners: Set<() => void> = new Set();
+const authStateListeners: Set<() => void> = new Set();
 
 function checkAuthState(): AuthState {
   const token = getAccessToken();
@@ -115,6 +115,9 @@ export function refreshAuthState(): void {
 function parseJwt(token: string): UserPayload {
   try {
     const base64Url = token.split('.')[1];
+    if (!base64Url) {
+      throw new Error('Invalid token format');
+    }
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
       atob(base64)
@@ -136,6 +139,9 @@ function parseJwt(token: string): UserPayload {
 function isTokenExpired(token: string): boolean {
   try {
     const base64Url = token.split('.')[1];
+    if (!base64Url) {
+      return true; // Invalid token format, consider expired
+    }
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
       atob(base64)

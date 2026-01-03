@@ -29,13 +29,14 @@ export async function registerUser(
 ): Promise<AuthResult> {
   try {
     await connectDB();
-  } catch (error) {
+  } catch {
     throw new Error(
       'Database connection failed. Please check your database configuration.'
     );
   }
 
-  const existingUser = await User.findOne({ email: input.email }).select(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existingUser = await (User as any).findOne({ email: input.email }).select(
     '_id'
   );
 
@@ -45,7 +46,8 @@ export async function registerUser(
 
   const hashedPassword = await hashPassword(input.password);
 
-  const user = await User.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).create({
     email: input.email,
     password: hashedPassword,
   });
@@ -79,7 +81,8 @@ export async function registerUser(
 export async function loginUser(input: LoginInput): Promise<AuthResult> {
   await connectDB();
 
-  const user = await User.findOne({ email: input.email }).select(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findOne({ email: input.email }).select(
     '+password +refreshToken'
   );
 
@@ -126,7 +129,8 @@ export async function refreshTokens(
 
   const decoded = verifyRefreshToken(refreshToken);
 
-  const user = await User.findById(decoded.userId).select(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findById(decoded.userId).select(
     '+refreshToken'
   );
 
@@ -158,7 +162,8 @@ export async function refreshTokens(
 export async function logoutUser(userId: string): Promise<void> {
   await connectDB();
 
-  const user = await User.findById(userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findById(userId);
 
   if (!user) {
     throw new Error('User not found');
@@ -177,7 +182,8 @@ export async function getUserProfile(userId: string): Promise<{
 }> {
   await connectDB();
 
-  const user = await User.findById(userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findById(userId);
 
   if (!user) {
     throw new Error('User not found');
@@ -211,7 +217,8 @@ export async function updateUserProfile(
   const updateFields: { email?: string; name?: string | null } = {};
 
   if (input.email) {
-    const existingUser = await User.findOne({ email: input.email, _id: { $ne: userId } });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingUser = await (User as any).findOne({ email: input.email, _id: { $ne: userId } });
     if (existingUser) {
       throw new Error('Email already in use');
     }
@@ -229,7 +236,8 @@ export async function updateUserProfile(
   console.log('Service - Update fields to apply:', updateFields);
 
   // Use findByIdAndUpdate to ensure the update is applied
-  const updatedUser = await User.findByIdAndUpdate(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updatedUser = await (User as any).findByIdAndUpdate(
     userId,
     { $set: updateFields },
     { new: true, runValidators: true }
@@ -242,7 +250,8 @@ export async function updateUserProfile(
   }
 
   // Verify the update by fetching the user again
-  const verifyUser = await User.findById(userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const verifyUser = await (User as any).findById(userId);
   console.log('Service - Verified user name from DB:', verifyUser?.name);
 
   return {
@@ -261,7 +270,8 @@ export async function updateUserPassword(
 ): Promise<void> {
   await connectDB();
 
-  const user = await User.findById(userId).select('+password');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findById(userId).select('+password');
 
   if (!user) {
     throw new Error('User not found');
@@ -284,7 +294,8 @@ export async function requestPasswordReset(email: string): Promise<{
 }> {
   await connectDB();
 
-  const user = await User.findOne({ email });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findOne({ email });
 
   if (!user) {
     // Don't reveal if email exists - security best practice
@@ -298,13 +309,15 @@ export async function requestPasswordReset(email: string): Promise<{
   expiresAt.setHours(expiresAt.getHours() + 1); // Token expires in 1 hour
 
   // Invalidate any existing reset tokens for this user
-  await PasswordResetToken.updateMany(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (PasswordResetToken as any).updateMany(
     { userId: user._id.toString(), used: false },
     { used: true }
   );
 
   // Create new reset token
-  await PasswordResetToken.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (PasswordResetToken as any).create({
     userId: user._id.toString(),
     token: resetToken,
     expiresAt,
@@ -323,7 +336,8 @@ export async function resetPasswordWithToken(
 ): Promise<void> {
   await connectDB();
 
-  const resetToken = await PasswordResetToken.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resetToken = await (PasswordResetToken as any).findOne({
     token,
     used: false,
     expiresAt: { $gt: new Date() },
@@ -333,7 +347,8 @@ export async function resetPasswordWithToken(
     throw new Error('Invalid or expired reset token');
   }
 
-  const user = await User.findById(resetToken.userId).select('+password');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = await (User as any).findById(resetToken.userId).select('+password');
 
   if (!user) {
     throw new Error('User not found');

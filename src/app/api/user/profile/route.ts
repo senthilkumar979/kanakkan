@@ -106,7 +106,8 @@ export async function PATCH(req: NextRequest) {
 
       // Update refresh token in database
       const { User } = await import('@/modules/auth/auth.model');
-      const userDoc = await User.findById(updatedProfile.id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userDoc = await (User as any).findById(updatedProfile.id);
       if (userDoc) {
         userDoc.refreshToken = refreshToken;
         await userDoc.save({ validateBeforeSave: false });

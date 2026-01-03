@@ -33,7 +33,7 @@ export async function PATCH(
     }
 
     return updateMoneyModeController(validationResult.data, params.id);
-  } catch (error) {
+  } catch {
     return Response.json(
       {
         success: false,

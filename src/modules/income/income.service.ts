@@ -14,7 +14,8 @@ async function validateIncomeCategory(
 ): Promise<void> {
   await connectDB();
 
-  const category = await Category.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const category = await (Category as any).findOne({
     _id: categoryId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -34,7 +35,8 @@ export async function createIncome(
 
   await validateIncomeCategory(input.incomeCategoryId, userId);
 
-  const account = await BankAccount.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const account = await (BankAccount as any).findOne({
     _id: input.accountId,
     userId,
     deletedAt: null,
@@ -44,7 +46,8 @@ export async function createIncome(
     throw new Error('Bank account not found');
   }
 
-  const income = await Income.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const income = await (Income as any).create({
     amount: input.amount,
     incomeCategoryId: input.incomeCategoryId,
     source: input.source,
@@ -101,9 +104,11 @@ export async function getIncomes(
     }
   }
 
-  const incomes = await Income.find(query).sort({ date: -1, createdAt: -1 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const incomes = await (Income as any).find(query).sort({ date: -1, createdAt: -1 });
 
-  return incomes.map((income) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return incomes.map((income: any) => ({
     id: income._id.toString(),
     amount: income.amount,
     incomeCategoryId: income.incomeCategoryId,
@@ -123,7 +128,8 @@ export async function getIncomeById(
 ): Promise<IncomeType | null> {
   await connectDB();
 
-  const income = await Income.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const income = await (Income as any).findOne({
     _id: incomeId,
     userId,
     deletedAt: null,
@@ -154,7 +160,8 @@ export async function updateIncome(
 ): Promise<IncomeType> {
   await connectDB();
 
-  const income = await Income.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const income = await (Income as any).findOne({
     _id: incomeId,
     userId,
     deletedAt: null,
@@ -169,7 +176,8 @@ export async function updateIncome(
   }
 
   if (input.accountId) {
-    const account = await BankAccount.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const account = await (BankAccount as any).findOne({
       _id: input.accountId,
       userId,
       deletedAt: null,
@@ -222,7 +230,8 @@ export async function deleteIncome(
 ): Promise<void> {
   await connectDB();
 
-  const income = await Income.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const income = await (Income as any).findOne({
     _id: incomeId,
     userId,
     deletedAt: null,

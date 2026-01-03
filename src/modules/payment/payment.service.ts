@@ -19,7 +19,8 @@ export async function createMoneyMode(
 ): Promise<MoneyModeType> {
   await connectDB();
 
-  const existingMoneyMode = await MoneyMode.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existingMoneyMode = await (MoneyMode as any).findOne({
     name: input.name,
     userId,
     deletedAt: null,
@@ -29,7 +30,8 @@ export async function createMoneyMode(
     throw new Error('Money mode with this name already exists');
   }
 
-  const moneyMode = await MoneyMode.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const moneyMode = await (MoneyMode as any).create({
     name: input.name,
     userId,
   });
@@ -47,12 +49,14 @@ export async function createMoneyMode(
 export async function getMoneyModes(userId: string): Promise<MoneyModeType[]> {
   await connectDB();
 
-  const moneyModes = await MoneyMode.find({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const moneyModes = await (MoneyMode as any).find({
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
   }).sort({ name: 1 });
 
-  return moneyModes.map((mode) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return moneyModes.map((mode: any) => ({
     id: mode._id.toString(),
     name: mode.name,
     userId: mode.userId,
@@ -68,7 +72,8 @@ export async function getMoneyModeById(
 ): Promise<MoneyModeType | null> {
   await connectDB();
 
-  const moneyMode = await MoneyMode.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const moneyMode = await (MoneyMode as any).findOne({
     _id: moneyModeId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -95,7 +100,8 @@ export async function updateMoneyMode(
 ): Promise<MoneyModeType> {
   await connectDB();
 
-  const moneyMode = await MoneyMode.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const moneyMode = await (MoneyMode as any).findOne({
     _id: moneyModeId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -106,7 +112,8 @@ export async function updateMoneyMode(
   }
 
   if (input.name) {
-    const existingMoneyMode = await MoneyMode.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingMoneyMode = await (MoneyMode as any).findOne({
       name: input.name,
       userId,
       deletedAt: null,
@@ -138,7 +145,8 @@ export async function deleteMoneyMode(
 ): Promise<void> {
   await connectDB();
 
-  const moneyMode = await MoneyMode.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const moneyMode = await (MoneyMode as any).findOne({
     _id: moneyModeId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -159,7 +167,8 @@ export async function createPaymentType(
 ): Promise<PaymentTypeType> {
   await connectDB();
 
-  const existingPaymentType = await PaymentType.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existingPaymentType = await (PaymentType as any).findOne({
     name: input.name,
     userId,
     deletedAt: null,
@@ -169,7 +178,8 @@ export async function createPaymentType(
     throw new Error('Payment type with this name already exists');
   }
 
-  const paymentType = await PaymentType.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paymentType = await (PaymentType as any).create({
     name: input.name,
     userId,
   });
@@ -187,12 +197,14 @@ export async function createPaymentType(
 export async function getPaymentTypes(userId: string): Promise<PaymentTypeType[]> {
   await connectDB();
 
-  const paymentTypes = await PaymentType.find({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paymentTypes = await (PaymentType as any).find({
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
   }).sort({ name: 1 });
 
-  return paymentTypes.map((type) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return paymentTypes.map((type: any) => ({
     id: type._id.toString(),
     name: type.name,
     userId: type.userId,
@@ -208,7 +220,8 @@ export async function getPaymentTypeById(
 ): Promise<PaymentTypeType | null> {
   await connectDB();
 
-  const paymentType = await PaymentType.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paymentType = await (PaymentType as any).findOne({
     _id: paymentTypeId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -235,7 +248,8 @@ export async function updatePaymentType(
 ): Promise<PaymentTypeType> {
   await connectDB();
 
-  const paymentType = await PaymentType.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paymentType = await (PaymentType as any).findOne({
     _id: paymentTypeId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -246,7 +260,8 @@ export async function updatePaymentType(
   }
 
   if (input.name) {
-    const existingPaymentType = await PaymentType.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existingPaymentType = await (PaymentType as any).findOne({
       name: input.name,
       userId,
       deletedAt: null,
@@ -278,7 +293,8 @@ export async function deletePaymentType(
 ): Promise<void> {
   await connectDB();
 
-  const paymentType = await PaymentType.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paymentType = await (PaymentType as any).findOne({
     _id: paymentTypeId,
     $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
@@ -299,7 +315,8 @@ export async function createCard(
 ): Promise<CardType> {
   await connectDB();
 
-  const existingCard = await Card.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existingCard = await (Card as any).findOne({
     providerName: input.providerName,
     userId,
     deletedAt: null,
@@ -309,7 +326,8 @@ export async function createCard(
     throw new Error('Card with this provider name already exists');
   }
 
-  const card = await Card.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const card = await (Card as any).create({
     providerName: input.providerName,
     userId,
   });
@@ -327,12 +345,14 @@ export async function createCard(
 export async function getCards(userId: string): Promise<CardType[]> {
   await connectDB();
 
-  const cards = await Card.find({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cards = await (Card as any).find({
     userId,
     deletedAt: null,
   }).sort({ providerName: 1 });
 
-  return cards.map((card) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return cards.map((card: any) => ({
     id: card._id.toString(),
     providerName: card.providerName,
     userId: card.userId,
@@ -348,7 +368,8 @@ export async function getCardById(
 ): Promise<CardType | null> {
   await connectDB();
 
-  const card = await Card.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const card = await (Card as any).findOne({
     _id: cardId,
     userId,
     deletedAt: null,
@@ -375,7 +396,8 @@ export async function updateCard(
 ): Promise<CardType> {
   await connectDB();
 
-  const card = await Card.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const card = await (Card as any).findOne({
     _id: cardId,
     userId,
     deletedAt: null,
@@ -386,7 +408,8 @@ export async function updateCard(
   }
 
   if (input.providerName) {
-    const existingCard = await Card.findOne({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existingCard = await (Card as any).findOne({
       providerName: input.providerName,
       userId,
       deletedAt: null,
@@ -415,7 +438,8 @@ export async function updateCard(
 export async function deleteCard(cardId: string, userId: string): Promise<void> {
   await connectDB();
 
-  const card = await Card.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const card = await (Card as any).findOne({
     _id: cardId,
     userId,
     deletedAt: null,

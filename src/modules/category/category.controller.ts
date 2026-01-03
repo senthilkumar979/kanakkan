@@ -101,7 +101,7 @@ export async function getCategoriesController(
 }
 
 export async function getCategoryController(
-  req: NextRequest,
+  _req: NextRequest,
   categoryId: string
 ): Promise<NextResponse> {
   try {
