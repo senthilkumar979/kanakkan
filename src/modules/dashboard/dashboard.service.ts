@@ -13,6 +13,7 @@ import type {
   MoneyModeUsage,
   CardSpend,
   IncomeVsExpense,
+  IncomeVsExpenseByDate,
   DashboardMetrics,
 } from './dashboard.types';
 
@@ -93,23 +94,36 @@ export async function getCategoryBreakdown(
   }
 
   const categoryIds = expenses.map((e) => e._id);
-  const categories = await Category.find({
-    _id: { $in: categoryIds },
-    userId,
-    deletedAt: null,
-  });
+  const [userCategories, systemCategories] = await Promise.all([
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (Category as any).find({
+      _id: { $in: categoryIds },
+      userId,
+      deletedAt: null,
+    }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (Category as any).find({
+      _id: { $in: categoryIds },
+      userId: 'SYSTEM',
+      deletedAt: null,
+    }),
+  ]);
+  const categories = [...userCategories, ...systemCategories];
 
   const categoryMap = new Map(
     categories.map((cat) => [cat._id.toString(), cat.name])
   );
 
   return expenses
-    .map((expense) => ({
-      categoryId: expense._id,
-      categoryName: categoryMap.get(expense._id) || 'Unknown',
-      total: expense.total,
-      count: expense.count,
-    }))
+    .map((expense) => {
+      const categoryId = String(expense._id);
+      return {
+        categoryId: categoryId,
+        categoryName: categoryMap.get(categoryId) || 'Unknown',
+        total: expense.total,
+        count: expense.count,
+      };
+    })
     .sort((a, b) => b.total - a.total);
 }
 
@@ -147,36 +161,53 @@ export async function getSubcategoryBreakdown(
   const categoryIds = expenses.map((e) => e._id.categoryId);
 
   const [subcategories, categories] = await Promise.all([
-    SubCategory.find({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (SubCategory as any).find({
       _id: { $in: subcategoryIds },
-      userId,
+      $or: [{ userId }, { userId: 'SYSTEM' }],
       deletedAt: null,
     }),
-    Category.find({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (Category as any).find({
       _id: { $in: [...new Set(categoryIds)] },
-      userId,
+      $or: [{ userId }, { userId: 'SYSTEM' }],
       deletedAt: null,
     }),
   ]);
 
   const subcategoryMap = new Map(
-    subcategories.map((sub) => [sub._id.toString(), sub.name])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    subcategories.map((sub: any) => [sub._id.toString(), sub.name])
   );
   const categoryMap = new Map(
-    categories.map((cat) => [cat._id.toString(), cat.name])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    categories.map((cat: any) => [cat._id.toString(), cat.name])
   );
 
-  return expenses
-    .map((expense) => ({
-      subcategoryId: expense._id.subcategoryId,
-      subcategoryName:
-        subcategoryMap.get(expense._id.subcategoryId) || 'Unknown',
-      categoryId: expense._id.categoryId,
-      categoryName: categoryMap.get(expense._id.categoryId) || 'Unknown',
-      total: expense.total,
-      count: expense.count,
-    }))
-    .sort((a, b) => b.total - a.total);
+  return (
+    expenses
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((expense: any) => {
+        const subcategoryId =
+          expense._id.subcategoryId?.toString() || expense._id.subcategoryId;
+        const categoryId =
+          expense._id.categoryId?.toString() || expense._id.categoryId;
+        return {
+          subcategoryId: String(subcategoryId),
+          subcategoryName: String(
+            subcategoryMap.get(String(subcategoryId)) || 'Unknown'
+          ),
+          categoryId: String(categoryId),
+          categoryName: String(
+            categoryMap.get(String(categoryId)) || 'Unknown'
+          ),
+          total: Number(expense.total),
+          count: Number(expense.count),
+        };
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .sort((a: any, b: any) => b.total - a.total)
+  );
 }
 
 export async function getMoneyModeUsage(
@@ -216,25 +247,32 @@ export async function getMoneyModeUsage(
   const totalSpend = expenses[0].totalSpend;
   const moneyModeIds = expenses[0].modes.map((m: { _id: string }) => m._id);
 
-  const moneyModes = await MoneyMode.find({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const moneyModes = await (MoneyMode as any).find({
     _id: { $in: moneyModeIds },
-    userId,
+    $or: [{ userId }, { userId: 'SYSTEM' }],
     deletedAt: null,
   });
 
   const moneyModeMap = new Map(
-    moneyModes.map((mode) => [mode._id.toString(), mode.name])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    moneyModes.map((mode: any) => [mode._id.toString(), mode.name])
   );
 
-  return expenses[0].modes
-    .map((mode: { _id: string; total: number; count: number }) => ({
-      moneyModeId: mode._id,
-      moneyModeName: moneyModeMap.get(mode._id) || 'Unknown',
-      total: mode.total,
-      count: mode.count,
-      percentage: totalSpend > 0 ? (mode.total / totalSpend) * 100 : 0,
-    }))
-    .sort((a, b) => b.total - a.total);
+  return (
+    expenses[0].modes
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((mode: any) => ({
+        moneyModeId: String(mode._id),
+        moneyModeName: String(moneyModeMap.get(String(mode._id)) || 'Unknown'),
+        total: Number(mode.total),
+        count: Number(mode.count),
+        percentage:
+          totalSpend > 0 ? (Number(mode.total) / totalSpend) * 100 : 0,
+      }))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .sort((a: any, b: any) => b.total - a.total)
+  );
 }
 
 export async function getCardSpend(
@@ -275,25 +313,32 @@ export async function getCardSpend(
   const totalSpend = expenses[0].totalSpend;
   const cardIds = expenses[0].cards.map((c: { _id: string }) => c._id);
 
-  const cards = await Card.find({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cards = await (Card as any).find({
     _id: { $in: cardIds },
     userId,
     deletedAt: null,
   });
 
   const cardMap = new Map(
-    cards.map((card) => [card._id.toString(), card.providerName])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cards.map((card: any) => [card._id.toString(), card.providerName])
   );
 
-  return expenses[0].cards
-    .map((card: { _id: string; total: number; count: number }) => ({
-      cardId: card._id,
-      cardProviderName: cardMap.get(card._id) || 'Unknown',
-      total: card.total,
-      count: card.count,
-      percentage: totalSpend > 0 ? (card.total / totalSpend) * 100 : 0,
-    }))
-    .sort((a, b) => b.total - a.total);
+  return (
+    expenses[0].cards
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((card: any) => ({
+        cardId: String(card._id),
+        cardProviderName: String(cardMap.get(String(card._id)) || 'Unknown'),
+        total: Number(card.total),
+        count: Number(card.count),
+        percentage:
+          totalSpend > 0 ? (Number(card.total) / totalSpend) * 100 : 0,
+      }))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .sort((a: any, b: any) => b.total - a.total)
+  );
 }
 
 export async function getIncomeVsExpense(
@@ -353,6 +398,80 @@ export async function getIncomeVsExpense(
   };
 }
 
+export async function getIncomeVsExpenseByDate(
+  userId: string,
+  filters: DashboardFilters
+): Promise<IncomeVsExpenseByDate[]> {
+  await connectDB();
+
+  const dateFilter = buildDateFilter(filters);
+
+  const [incomeResult, expenseResult] = await Promise.all([
+    Income.aggregate([
+      {
+        $match: {
+          userId,
+          deletedAt: null,
+          ...dateFilter,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$date' },
+          },
+          totalIncome: { $sum: '$amount' },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]),
+    Expense.aggregate([
+      {
+        $match: {
+          userId,
+          deletedAt: null,
+          ...dateFilter,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$date' },
+          },
+          totalExpense: { $sum: '$amount' },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]),
+  ]);
+
+  const incomeMap = new Map(
+    incomeResult.map((item) => [item._id, item.totalIncome])
+  );
+  const expenseMap = new Map(
+    expenseResult.map((item) => [item._id, item.totalExpense])
+  );
+
+  const allDates = new Set([
+    ...incomeResult.map((item) => item._id),
+    ...expenseResult.map((item) => item._id),
+  ]);
+
+  return Array.from(allDates)
+    .sort()
+    .map(
+      (date): IncomeVsExpenseByDate => ({
+        date: String(date),
+        income: incomeMap.get(date) || 0,
+        expense: expenseMap.get(date) || 0,
+      })
+    );
+}
+
 export async function getDashboardMetrics(
   userId: string,
   filters: DashboardFilters
@@ -366,6 +485,7 @@ export async function getDashboardMetrics(
     moneyModeUsage,
     cardSpend,
     incomeVsExpense,
+    incomeVsExpenseByDate,
   ] = await Promise.all([
     getTotalSpend(userId, filters),
     getCategoryBreakdown(userId, filters),
@@ -373,6 +493,7 @@ export async function getDashboardMetrics(
     getMoneyModeUsage(userId, filters),
     getCardSpend(userId, filters),
     getIncomeVsExpense(userId, filters),
+    getIncomeVsExpenseByDate(userId, filters),
   ]);
 
   return {
@@ -382,6 +503,6 @@ export async function getDashboardMetrics(
     moneyModeUsage,
     cardSpend,
     incomeVsExpense,
+    incomeVsExpenseByDate,
   };
 }
-

@@ -1,9 +1,14 @@
-import type { WelcomeEmailData, MonthlySummaryEmailData, DailyReminderEmailData, PasswordResetEmailData } from './email.types';
-import { formatCurrency, formatCurrencyWithSign, formatCurrencyAbsolute } from '@/utils/currency';
+import { formatCurrency, formatCurrencyWithSign } from '@/utils/currency';
+import type {
+  DailyReminderEmailData,
+  MonthlySummaryEmailData,
+  PasswordResetEmailData,
+  WelcomeEmailData,
+} from './email.types';
 
 export function getWelcomeEmailTemplate(data: WelcomeEmailData): string {
   const name = data.name || 'there';
-  
+
   return `
 <!DOCTYPE html>
 <html>
@@ -56,10 +61,13 @@ export function getMonthlySummaryEmailTemplate(
   data: MonthlySummaryEmailData
 ): string {
   const name = data.name || 'there';
-  const monthName = new Date(data.year, parseInt(data.month) - 1).toLocaleString('default', { month: 'long' });
+  const monthName = new Date(
+    data.year,
+    parseInt(data.month) - 1
+  ).toLocaleString('default', { month: 'long' });
   const isPositive = data.netAmount >= 0;
   const netAmountColor = isPositive ? '#10b981' : '#ef4444';
-  
+
   return `
 <!DOCTYPE html>
 <html>
@@ -102,19 +110,27 @@ export function getMonthlySummaryEmailTemplate(
       </div>
     </div>
     
-    ${data.topCategories.length > 0 ? `
+    ${
+      data.topCategories.length > 0
+        ? `
     <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
       <h2 style="margin-top: 0; color: #667eea; font-size: 18px;">Top Categories</h2>
       <ul style="list-style: none; padding: 0; margin: 0;">
-        ${data.topCategories.map(cat => `
+        ${data.topCategories
+          .map(
+            (cat) => `
           <li style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 16px;">${cat.name}</span>
             <span style="font-weight: bold; color: #667eea;">${formatCurrency(cat.amount)}</span>
           </li>
-        `).join('')}
+        `
+          )
+          .join('')}
       </ul>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
     
     <p style="font-size: 16px; margin-bottom: 0;">
       Keep up the great work tracking your finances!<br>
@@ -130,7 +146,6 @@ export function getMonthlySummaryEmailTemplate(
   `.trim();
 }
 
-
 export function getDailyReminderEmailTemplate(
   data: DailyReminderEmailData
 ): string {
@@ -142,7 +157,7 @@ export function getDailyReminderEmailTemplate(
     month: 'long',
     day: 'numeric',
   });
-  
+
   const hasTransactions = (data.todayTransactionCount || 0) > 0;
   const todayIncome = data.todayIncome || 0;
   const todayExpense = data.todayExpense || 0;
@@ -160,8 +175,6 @@ export function getDailyReminderEmailTemplate(
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
   <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 50px 30px; text-align: center; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-      <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
       <div style="position: relative; z-index: 1;">
         <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
         <h1 style="color: white; margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Daily Reminder</h1>
@@ -174,13 +187,17 @@ export function getDailyReminderEmailTemplate(
       
       <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; border-left: 4px solid #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
         <p style="font-size: 16px; margin: 0 0 15px 0; color: #4b5563;">
-          ${hasTransactions 
-            ? "Great job tracking your finances today! Here's a quick summary:" 
-            : "Don't forget to track your expenses and income for today! 📝"}
+          ${
+            hasTransactions
+              ? "Great job tracking your finances today! Here's a quick summary:"
+              : "Don't forget to track your expenses and income for today! 📝"
+          }
         </p>
       </div>
 
-      ${hasTransactions ? `
+      ${
+        hasTransactions
+          ? `
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
         <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
           <div style="font-size: 32px; margin-bottom: 8px;">💰</div>
@@ -204,15 +221,19 @@ export function getDailyReminderEmailTemplate(
           ${data.todayTransactionCount} transaction${data.todayTransactionCount !== 1 ? 's' : ''} today
         </div>
       </div>
-      ` : ''}
+      `
+          : ''
+      }
 
       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(102,126,234,0.3);">
         <div style="font-size: 48px; margin-bottom: 15px;">✨</div>
         <h2 style="color: white; margin: 0 0 15px 0; font-size: 24px; font-weight: bold;">Time to Track Your Finances!</h2>
         <p style="color: rgba(255,255,255,0.95); margin: 0 0 20px 0; font-size: 16px;">
-          ${hasTransactions 
-            ? "Keep up the momentum! Add any remaining transactions from today." 
-            : "Log your expenses and income to stay on top of your financial goals."}
+          ${
+            hasTransactions
+              ? 'Keep up the momentum! Add any remaining transactions from today.'
+              : 'Log your expenses and income to stay on top of your financial goals.'
+          }
         </p>
         <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/transactions" style="display: inline-block; background: white; color: #667eea; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
           Add Transaction →
@@ -262,8 +283,6 @@ export function getPasswordResetEmailTemplate(
   <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <!-- Header with gradient -->
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 50px 30px; text-align: center; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-      <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
       <div style="position: relative; z-index: 1;">
         <div style="font-size: 64px; margin-bottom: 20px;">🔑</div>
         <h1 style="color: white; margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Reset Your Password</h1>

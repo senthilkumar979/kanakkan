@@ -1,9 +1,8 @@
 'use client';
 
+import { formatCurrency } from '@/utils/currency';
 import { useMemo } from 'react';
 import type { CalendarDataPoint } from './chart.types';
-import { ChartTooltip } from './ChartTooltip';
-import { formatCurrency } from '@/utils/currency';
 
 interface CalendarChartProps {
   data: CalendarDataPoint[];
@@ -18,8 +17,6 @@ interface CalendarChartProps {
 
 export function CalendarChart({
   data,
-  width,
-  height = 200,
   colorScale = {
     min: 'hsl(var(--color-muted))',
     max: 'hsl(var(--color-primary))',
@@ -27,9 +24,7 @@ export function CalendarChart({
   year = new Date().getFullYear(),
 }: CalendarChartProps) {
   const calendarData = useMemo(() => {
-    const dataMap = new Map(
-      data.map((point) => [point.date, point.value])
-    );
+    const dataMap = new Map(data.map((point) => [point.date, point.value]));
 
     const daysInYear = [];
     const startDate = new Date(year, 0, 1);
@@ -78,9 +73,7 @@ export function CalendarChart({
     'Dec',
   ];
 
-  const weeks = Array.from(
-    new Set(calendarData.map((d) => d.week))
-  ).sort();
+  const weeks = Array.from(new Set(calendarData.map((d) => d.week))).sort();
 
   if (calendarData.length === 0) {
     return (
@@ -108,7 +101,10 @@ export function CalendarChart({
             );
           })}
         </div>
-        <div className="grid gap-1" style={{ gridTemplateColumns: 'repeat(53, minmax(0, 1fr))' }}>
+        <div
+          className="grid gap-1"
+          style={{ gridTemplateColumns: 'repeat(53, minmax(0, 1fr))' }}
+        >
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
             <div
               key={index}
@@ -135,10 +131,11 @@ export function CalendarChart({
 }
 
 function getWeekNumber(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
-

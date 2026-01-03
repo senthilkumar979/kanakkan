@@ -5,7 +5,6 @@ import {
   RadialBar,
   ResponsiveContainer,
   Tooltip,
-  Legend,
 } from 'recharts';
 import { ChartTooltip } from './ChartTooltip';
 import { ChartLegend } from './ChartLegend';
@@ -52,11 +51,28 @@ export function RadialBarChartComponent({
       DEFAULT_COLORS[index % DEFAULT_COLORS.length],
   }));
 
-  const legendItems = chartData.map((item) => ({
-    name: item[nameKey] as string,
-    color: item.fill as string,
-    value: item[dataKey] as number,
-  }));
+  const legendItems = chartData.map((item) => {
+    // ChartDataPoint interface guarantees 'name' and 'value' properties exist
+    // But we also support custom nameKey and dataKey for flexibility
+    const name =
+      nameKey === 'name'
+        ? item.name
+        : ((item as Record<string, unknown>)[nameKey] as string | undefined) ||
+          item.name;
+
+    const value =
+      dataKey === 'value'
+        ? item.value
+        : (((item as Record<string, unknown>)[dataKey] as number | undefined) ??
+          item.value ??
+          0);
+
+    return {
+      name: name || 'Unknown',
+      color: item.fill || '',
+      value: value,
+    };
+  });
 
   return (
     <div className="w-full">
@@ -76,4 +92,3 @@ export function RadialBarChartComponent({
     </div>
   );
 }
-

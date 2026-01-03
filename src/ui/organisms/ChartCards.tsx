@@ -1,25 +1,18 @@
 'use client';
 
-import {
-  StackedAreaChart,
-  RadialBarChart,
-  HeatmapChart,
-  SankeyChart,
-  CalendarChart,
-} from './charts';
 import type {
-  CategoryBreakdown,
-  SubcategoryBreakdown,
-  MoneyModeUsage,
   CardSpend,
+  CategoryBreakdown,
   IncomeVsExpense,
+  IncomeVsExpenseByDate,
+  MoneyModeUsage,
+  SubcategoryBreakdown,
 } from '@/modules/dashboard/dashboard.types';
+import { RadialBarChart, SankeyChart, StackedAreaChart } from './charts';
 import type {
-  TimeSeriesDataPoint,
   ChartDataPoint,
-  HeatmapDataPoint,
   SankeyData,
-  CalendarDataPoint,
+  TimeSeriesDataPoint,
 } from './charts/chart.types';
 
 interface ChartCardProps {
@@ -40,10 +33,12 @@ let cardIndex = 0;
 function ChartCard({ title, children }: ChartCardProps) {
   const gradient = chartCardGradients[cardIndex % chartCardGradients.length];
   cardIndex++;
-  
+
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl">
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}></div>
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}
+      ></div>
       <div className="relative">
         <h3 className="mb-6 text-lg font-semibold text-slate-900">{title}</h3>
         {children}
@@ -58,6 +53,7 @@ interface ChartCardsProps {
   moneyModeUsage: MoneyModeUsage[];
   cardSpend: CardSpend[];
   incomeVsExpense: IncomeVsExpense;
+  incomeVsExpenseByDate: IncomeVsExpenseByDate[];
 }
 
 export function ChartCards({
@@ -66,6 +62,7 @@ export function ChartCards({
   moneyModeUsage,
   cardSpend,
   incomeVsExpense,
+  incomeVsExpenseByDate,
 }: ChartCardsProps) {
   const categoryChartData: ChartDataPoint[] = categoryBreakdown.map((item) => ({
     name: item.categoryName,
@@ -82,16 +79,23 @@ export function ChartCards({
     value: item.total,
   }));
 
-  const incomeVsExpenseData: TimeSeriesDataPoint[] = [
-    {
-      date: new Date().toISOString().split('T')[0],
-      income: incomeVsExpense.totalIncome,
-      expense: incomeVsExpense.totalExpense,
-    },
-  ];
+  const incomeVsExpenseData: TimeSeriesDataPoint[] =
+    incomeVsExpenseByDate.length > 0
+      ? (incomeVsExpenseByDate.map((item) => ({
+          date: item.date,
+          income: item.income,
+          expense: item.expense,
+        })) as TimeSeriesDataPoint[])
+      : ([
+          {
+            date: new Date().toISOString().split('T')[0],
+            income: incomeVsExpense.totalIncome,
+            expense: incomeVsExpense.totalExpense,
+          },
+        ] as TimeSeriesDataPoint[]);
 
   const sankeyNodes = new Map<string, { id: string; name: string }>();
-  
+
   categoryBreakdown.forEach((cat) => {
     sankeyNodes.set(cat.categoryId, {
       id: cat.categoryId,
@@ -157,4 +161,3 @@ export function ChartCards({
     </div>
   );
 }
-

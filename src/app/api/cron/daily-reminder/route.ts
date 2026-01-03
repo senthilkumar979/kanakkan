@@ -39,8 +39,8 @@ export async function GET() {
 
     await connectDB();
 
-    // Get all users
-    const users = await User.find({}).select('email _id');
+    // Get all users (include name for email personalization)
+    const users = await User.find({}).select('email _id name');
 
     if (users.length === 0) {
       return NextResponse.json({
@@ -83,6 +83,7 @@ export async function GET() {
 
         const result = await sendDailyReminderEmail({
           email: user.email,
+          name: user.name || undefined,
           todayIncome,
           todayExpense,
           todayTransactionCount,

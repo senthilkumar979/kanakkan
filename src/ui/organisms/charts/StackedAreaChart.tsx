@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  Legend,
 } from 'recharts';
 import { ChartTooltip } from './ChartTooltip';
 import { ChartLegend } from './ChartLegend';
@@ -41,19 +40,53 @@ export function StackedAreaChart({
   colors,
   showLegend = true,
 }: StackedAreaChartProps) {
-  const chartColors = dataKeys.map(
-    (_, index) => colors?.[`color${index}`] || DEFAULT_COLORS[index % DEFAULT_COLORS.length]
+  const chartColors = dataKeys.map((_, index): string => {
+    const customColor = colors?.[`color${index}`];
+    if (customColor && typeof customColor === 'string') {
+      return customColor;
+    }
+    return DEFAULT_COLORS[index % DEFAULT_COLORS.length]!;
+  });
+
+  // Calculate totals for each dataKey
+  const totals = dataKeys.reduce(
+    (acc, key) => {
+      acc[key] = data.reduce((sum, item) => {
+        const value = item[key];
+        return sum + (typeof value === 'number' ? value : 0);
+      }, 0);
+      return acc;
+    },
+    {} as Record<string, number>
   );
 
-  const legendItems = dataKeys.map((key, index) => ({
-    name: key,
-    color: chartColors[index],
-  }));
+  // Format legend labels (capitalize first letter, add emoji)
+  const formatLegendName = (key: string): string => {
+    const formatted = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+    const emojiMap: Record<string, string> = {
+      income: '💰',
+      expense: '💸',
+    };
+    return `${emojiMap[key.toLowerCase()] || ''} ${formatted}`.trim();
+  };
+
+  const legendItems = dataKeys.map((key, index) => {
+    const color =
+      chartColors[index] ?? DEFAULT_COLORS[index % DEFAULT_COLORS.length]!;
+    return {
+      name: formatLegendName(key),
+      color,
+      value: totals[key] || 0,
+    };
+  });
 
   return (
     <div className="w-full">
       <ResponsiveContainer width={width || '100%'} height={height}>
-        <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <AreaChart
+          data={data}
+          margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+        >
           <defs>
             {dataKeys.map((key, index) => (
               <linearGradient
@@ -85,7 +118,12 @@ export function StackedAreaChart({
           />
           <YAxis
             className="text-xs text-muted-foreground"
-            tickFormatter={(value) => formatCurrency(value, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            tickFormatter={(value) =>
+              formatCurrency(value, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })
+            }
           />
           <Tooltip content={<ChartTooltip />} />
           {dataKeys.map((key, index) => (
@@ -104,4 +142,3 @@ export function StackedAreaChart({
     </div>
   );
 }
-

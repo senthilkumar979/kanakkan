@@ -164,3 +164,130 @@ export async function createIncome(
   });
 }
 
+export interface Expense {
+  id: string;
+  amount: number;
+  categoryId: string;
+  subCategoryId: string;
+  moneyModeId: string;
+  cardId?: string;
+  paymentTypeId: string;
+  accountId: string;
+  date: string;
+  note?: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
+export interface Income {
+  id: string;
+  amount: number;
+  incomeCategoryId: string;
+  source: string;
+  accountId: string;
+  date: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
+export interface Transaction {
+  id: string;
+  type: 'expense' | 'income';
+  amount: number;
+  date: string;
+  category?: string;
+  subCategory?: string;
+  source?: string;
+  note?: string;
+  createdAt: string;
+  // Additional fields for editing
+  categoryId?: string;
+  subCategoryId?: string;
+  incomeCategoryId?: string;
+  moneyModeId?: string;
+  cardId?: string;
+  paymentTypeId?: string;
+  accountId?: string;
+  accountName?: string;
+}
+
+export async function getExpenses(
+  startDate?: string,
+  endDate?: string
+): Promise<ApiResponse<Expense[]>> {
+  let url = '/api/expenses';
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  if (params.toString()) url += `?${params.toString()}`;
+  return apiRequest<Expense[]>(url);
+}
+
+export async function getIncomes(
+  startDate?: string,
+  endDate?: string
+): Promise<ApiResponse<Income[]>> {
+  let url = '/api/incomes';
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  if (params.toString()) url += `?${params.toString()}`;
+  return apiRequest<Income[]>(url);
+}
+
+export async function updateExpense(
+  expenseId: string,
+  input: {
+    amount?: number;
+    categoryId?: string;
+    subCategoryId?: string;
+    moneyModeId?: string;
+    cardId?: string | null;
+    paymentTypeId?: string;
+    accountId?: string;
+    date?: string;
+    note?: string | null;
+  }
+): Promise<ApiResponse<Expense>> {
+  return apiRequest<Expense>(`/api/expenses/${expenseId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteExpense(
+  expenseId: string
+): Promise<ApiResponse<{ message: string }>> {
+  return apiRequest<{ message: string }>(`/api/expenses/${expenseId}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function updateIncome(
+  incomeId: string,
+  input: {
+    amount?: number;
+    incomeCategoryId?: string;
+    source?: string;
+    accountId?: string;
+    date?: string;
+  }
+): Promise<ApiResponse<Income>> {
+  return apiRequest<Income>(`/api/incomes/${incomeId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteIncome(
+  incomeId: string
+): Promise<ApiResponse<{ message: string }>> {
+  return apiRequest<{ message: string }>(`/api/incomes/${incomeId}`, {
+    method: 'DELETE',
+  });
+}
+

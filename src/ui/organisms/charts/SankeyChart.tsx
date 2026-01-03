@@ -23,7 +23,6 @@ export function SankeyChartComponent({
       return null;
     }
 
-    const nodeMap = new Map(data.nodes.map((node) => [node.id, node]));
     const sourceNodes = new Set(data.links.map((link) => link.source));
     const targetNodes = new Set(data.links.map((link) => link.target));
 
@@ -49,24 +48,24 @@ export function SankeyChartComponent({
     }));
 
     const allPositions = [...leftPositions, ...rightPositions];
-    const positionMap = new Map(
-      allPositions.map((pos) => [pos.id, pos])
-    );
+    const positionMap = new Map(allPositions.map((pos) => [pos.id, pos]));
 
-    const links = data.links.map((link) => {
-      const source = positionMap.get(link.source);
-      const target = positionMap.get(link.target);
-      if (!source || !target) return null;
+    const links = data.links
+      .map((link) => {
+        const source = positionMap.get(link.source);
+        const target = positionMap.get(link.target);
+        if (!source || !target) return null;
 
-      return {
-        ...link,
-        sourceX: source.x + source.width,
-        sourceY: source.y + source.height / 2,
-        targetX: target.x,
-        targetY: target.y + target.height / 2,
-        value: link.value,
-      };
-    }).filter(Boolean) as Array<{
+        return {
+          ...link,
+          sourceX: source.x + source.width,
+          sourceY: source.y + source.height / 2,
+          targetX: target.x,
+          targetY: target.y + target.height / 2,
+          value: link.value,
+        };
+      })
+      .filter(Boolean) as Array<{
       source: string;
       target: string;
       value: number;
@@ -132,4 +131,3 @@ export function SankeyChartComponent({
     </div>
   );
 }
-

@@ -29,14 +29,23 @@ export async function POST(req: NextRequest) {
     try {
       const { token } = await requestPasswordReset(validationResult.data.email);
 
-      // Send password reset email (non-blocking)
-      sendPasswordResetEmail({
-        email: validationResult.data.email,
-        name: user?.name || undefined,
-        resetToken: token,
-      }).catch((error) => {
-        console.error('Failed to send password reset email:', error);
-      });
+      // Send password reset email (await to ensure it's sent, but don't fail the request if it fails)
+      try {
+        const emailResult = await sendPasswordResetEmail({
+          email: validationResult.data.email,
+          name: user?.name || undefined,
+          resetToken: token,
+        });
+        
+        if (!emailResult.success) {
+          console.error('Failed to send password reset email:', emailResult.error);
+        } else {
+          console.log('Password reset email sent successfully to:', validationResult.data.email);
+        }
+      } catch (emailError) {
+        console.error('Error sending password reset email:', emailError);
+        // Don't fail the request - still return success for security
+      }
 
       // Always return success (security best practice - don't reveal if email exists)
       return NextResponse.json({
@@ -46,6 +55,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
       // Still return success to prevent email enumeration
       // The error message from requestPasswordReset already doesn't reveal if email exists
+      console.error('Error in requestPasswordReset:', error);
       return NextResponse.json({
         success: true,
         message: 'If an account with that email exists, a password reset link has been sent.',

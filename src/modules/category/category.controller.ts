@@ -20,7 +20,7 @@ import type {
 } from './category.schema';
 
 export async function createCategoryController(
-  req: NextRequest
+  input: CreateCategoryInput
 ): Promise<NextResponse> {
   try {
     const user = await getCurrentUser();
@@ -34,12 +34,6 @@ export async function createCategoryController(
         { status: 401 }
       );
     }
-
-    const body = await req.json();
-    const input: CreateCategoryInput = {
-      name: body.name,
-      type: body.type,
-    };
 
     const category = await createCategory(input, user.userId);
 
@@ -245,7 +239,7 @@ export async function deleteCategoryController(
 }
 
 export async function createSubCategoryController(
-  req: NextRequest
+  input: CreateSubCategoryInput
 ): Promise<NextResponse> {
   try {
     const user = await getCurrentUser();
@@ -259,12 +253,6 @@ export async function createSubCategoryController(
         { status: 401 }
       );
     }
-
-    const body = await req.json();
-    const input: CreateSubCategoryInput = {
-      name: body.name,
-      categoryId: body.categoryId,
-    };
 
     const subCategory = await createSubCategory(input, user.userId);
 

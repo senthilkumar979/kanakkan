@@ -25,6 +25,8 @@ export function useDashboard(
     try {
       const result = await getDashboardMetrics(filters);
 
+      console.log('result', result);
+
       if (!result.success) {
         setError(result.error || 'Failed to fetch dashboard data');
         setData(null);

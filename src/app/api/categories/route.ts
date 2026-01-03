@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return createCategoryController(req);
+    return createCategoryController(validationResult.data);
   } catch (error) {
     return Response.json(
       {

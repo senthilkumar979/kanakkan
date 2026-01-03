@@ -48,25 +48,16 @@ export function HeatmapChart({
   const weeks = Array.from(new Set(data.map((d) => d.week))).sort();
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  const heatmapData = days.map((day) => ({
-    day,
-    ...weeks.reduce(
-      (acc, week) => {
-        const point = data.find((d) => d.day === day && d.week === week);
-        acc[week] = point?.value || 0;
-        return acc;
-      },
-      {} as Record<string, number>
-    ),
-  }));
-
   return (
     <div className="w-full overflow-x-auto">
       <div style={{ width: width || '100%', height }}>
         <div className="grid grid-cols-7 gap-1">
           <div />
           {weeks.map((week) => (
-            <div key={week} className="text-center text-xs text-muted-foreground">
+            <div
+              key={week}
+              className="text-center text-xs text-muted-foreground"
+            >
               {week}
             </div>
           ))}
@@ -76,9 +67,16 @@ export function HeatmapChart({
                 {day}
               </div>
               {weeks.map((week) => {
-                const point = data.find((d) => d.day === day && d.week === week);
+                const point = data.find(
+                  (d) => d.day === day && d.week === week
+                );
                 const value = point?.value || 0;
-                const color = getColorForValue(value, minValue, maxValue, colorScale);
+                const color = getColorForValue(
+                  value,
+                  minValue,
+                  maxValue,
+                  colorScale
+                );
                 return (
                   <div
                     key={`${day}-${week}`}
@@ -95,4 +93,3 @@ export function HeatmapChart({
     </div>
   );
 }
-

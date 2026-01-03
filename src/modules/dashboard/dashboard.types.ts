@@ -48,6 +48,12 @@ export interface IncomeVsExpense {
   expenseCount: number;
 }
 
+export interface IncomeVsExpenseByDate {
+  date: string;
+  income: number;
+  expense: number;
+}
+
 export interface DashboardMetrics {
   totalSpend: TotalSpend;
   categoryBreakdown: CategoryBreakdown[];
@@ -55,5 +61,6 @@ export interface DashboardMetrics {
   moneyModeUsage: MoneyModeUsage[];
   cardSpend: CardSpend[];
   incomeVsExpense: IncomeVsExpense;
+  incomeVsExpenseByDate: IncomeVsExpenseByDate[];
 }
 

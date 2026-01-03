@@ -67,6 +67,15 @@ export function Navbar() {
                       📊 Dashboard
                     </Button>
                   </Link>
+                  <Link href="/transactions-list">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-500 hover:text-white"
+                    >
+                      📊 Transactions
+                    </Button>
+                  </Link>
                   <Link href="/transactions">
                     <Button
                       variant="ghost"
@@ -86,7 +95,7 @@ export function Navbar() {
                     </Button>
                   </Link>
                   <span className="text-sm text-muted-foreground">
-                    {user?.name || user?.email}
+                    {user?.email}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 sm:hidden">

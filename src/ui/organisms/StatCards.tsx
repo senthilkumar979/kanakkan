@@ -1,7 +1,14 @@
 'use client';
 
-import type { TotalSpend, IncomeVsExpense } from '@/modules/dashboard/dashboard.types';
-import { formatCurrencyAbsolute, formatCurrencyWithSign } from '@/utils/currency';
+import type {
+  IncomeVsExpense,
+  TotalSpend,
+} from '@/modules/dashboard/dashboard.types';
+import {
+  formatCurrencyAbsolute,
+  formatCurrencyWithSign,
+} from '@/utils/currency';
+import Link from 'next/link';
 
 interface StatCardsProps {
   totalSpend: TotalSpend;
@@ -64,13 +71,20 @@ export function StatCards({ totalSpend, incomeVsExpense }: StatCardsProps) {
       value: formatCurrencyWithSign(netAmount),
       subtitle: isPositive ? 'Surplus' : 'Deficit',
       extra: incomeVsExpense.totalIncome > 0 && (
-        <div className={`mt-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${
-          isPositive 
-            ? 'bg-emerald-100 text-emerald-700' 
-            : 'bg-rose-100 text-rose-700'
-        }`}>
+        <div
+          className={`mt-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${
+            isPositive
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-rose-100 text-rose-700'
+          }`}
+        >
           <span>{isPositive ? '↑' : '↓'}</span>
-          <span>{Math.abs((netAmount / incomeVsExpense.totalIncome) * 100).toFixed(1)}%</span>
+          <span>
+            {Math.abs((netAmount / incomeVsExpense.totalIncome) * 100).toFixed(
+              1
+            )}
+            %
+          </span>
         </div>
       ),
     },
@@ -79,25 +93,35 @@ export function StatCards({ totalSpend, incomeVsExpense }: StatCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => (
-        <div
+        <Link
+          href="/transactions-list"
           key={index}
-          className={`group relative overflow-hidden rounded-2xl border ${card.borderColor} bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
+          className={`group relative overflow-hidden rounded-2xl border ${card.borderColor} bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
         >
-          <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}></div>
+          <div
+            className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+          ></div>
           <div className="relative">
             <div className="mb-4 flex items-center justify-between">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${card.gradient} text-2xl shadow-lg`}>
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${card.gradient} text-2xl shadow-lg`}
+              >
                 {card.icon}
               </div>
             </div>
-            <div className="mb-1 text-sm font-medium text-slate-600">{card.title}</div>
-            <div className="mb-2 text-2xl font-bold text-slate-900">{card.value}</div>
-            <div className="text-xs font-medium text-slate-500">{card.subtitle}</div>
-            {card.extra && <div className="mt-3">{card.extra}</div>}
+            <div className="mb-1 text-sm font-medium text-slate-600">
+              {card.title}
+            </div>
+            <div className="mb-2 text-2xl font-bold text-slate-900">
+              {card.value}
+            </div>
+            <div className="text-xs font-medium text-slate-500">
+              {card.subtitle}
+            </div>
+            {/* {card.extra && <div className="mt-3">{card.extra}</div>} */}
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
 }
-

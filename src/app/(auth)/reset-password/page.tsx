@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Input } from '@/ui/atoms/Input';
-import { Label } from '@/ui/atoms/Label';
-import { Button } from '@/ui/atoms/Button';
-import { ErrorMessage } from '@/ui/molecules/ErrorMessage';
-import { SuccessMessage } from '@/ui/molecules/SuccessMessage';
-import { resetPassword } from '@/services/auth.service';
 import { useAuth } from '@/hooks/useAuth';
 import { resetPasswordSchema } from '@/modules/auth/auth.schema';
+import { resetPassword } from '@/services/auth.service';
+import { Button } from '@/ui/atoms/Button';
+import { Input } from '@/ui/atoms/Input';
+import { Label } from '@/ui/atoms/Label';
+import { ErrorMessage } from '@/ui/molecules/ErrorMessage';
+import { SuccessMessage } from '@/ui/molecules/SuccessMessage';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -78,9 +78,7 @@ export default function ResetPasswordPage() {
 
       if (!validationResult.success) {
         setError(
-          validationResult.error.errors
-            .map((err) => err.message)
-            .join(', ')
+          validationResult.error.errors.map((err) => err.message).join(', ')
         );
         setIsLoading(false);
         return;
@@ -193,4 +191,3 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
-

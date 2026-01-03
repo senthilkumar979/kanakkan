@@ -39,6 +39,7 @@ export function DashboardGrid({
           moneyModeUsage={data.moneyModeUsage}
           cardSpend={data.cardSpend}
           incomeVsExpense={data.incomeVsExpense}
+          incomeVsExpenseByDate={data.incomeVsExpenseByDate}
         />
       </div>
     </div>
