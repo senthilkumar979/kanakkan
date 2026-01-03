@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-background: 240 20% 99%;
+    --color-foreground: 240 10% 3.9%;
+    --color-card: 0 0% 100%;
+    --color-card-foreground: 240 10% 3.9%;
+    --color-primary: 262 83% 58%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-secondary: 280 100% 70%;
+    --color-secondary-foreground: 0 0% 100%;
+    --color-muted: 240 4.8% 95.9%;
+    --color-muted-foreground: 240 3.8% 46.1%;
+    --color-accent: 142 76% 36%;
+    --color-accent-foreground: 0 0% 100%;
+    --color-destructive: 0 84.2% 60.2%;
+    --color-destructive-foreground: 0 0% 100%;
+    --color-border: 240 5.9% 90%;
+    --color-input: 240 5.9% 90%;
+    --color-ring: 262 83% 58%;
+    --radius-lg: 1rem;
+    --radius-md: calc(1rem - 2px);
+    --radius-sm: calc(1rem - 4px);
+  }
+
+  .dark {
+    --color-background: 240 10% 3.9%;
+    --color-foreground: 0 0% 98%;
+    --color-card: 240 10% 3.9%;
+    --color-card-foreground: 0 0% 98%;
+    --color-primary: 262 83% 58%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-secondary: 280 100% 70%;
+    --color-secondary-foreground: 0 0% 100%;
+    --color-muted: 240 3.7% 15.9%;
+    --color-muted-foreground: 240 5% 64.9%;
+    --color-accent: 142 76% 36%;
+    --color-accent-foreground: 0 0% 100%;
+    --color-destructive: 0 62.8% 30.6%;
+    --color-destructive-foreground: 0 0% 100%;
+    --color-border: 240 3.7% 15.9%;
+    --color-input: 240 3.7% 15.9%;
+    --color-ring: 262 83% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 text-foreground;
+    background-attachment: fixed;
+  }
+}
+
